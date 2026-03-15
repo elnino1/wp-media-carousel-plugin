@@ -1,0 +1,472 @@
+/*
+ * Inkiz Media Carousel – Frontend Styles
+ * Plugin: inkiz-media-carousel
+ */
+
+/* ---------- Google Fonts ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+
+/* ---------- Custom Properties ---------- */
+.inkiz-mc-wrapper {
+    --inkiz-mc-radius:      12px;
+    --inkiz-mc-gap:         12px;
+    --inkiz-mc-accent:      #1a1a1a;
+    --inkiz-mc-thumb-size:  80px;
+    --inkiz-mc-transition:  0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --inkiz-mc-shadow:      0 4px 24px rgba(0,0,0,0.10);
+    --inkiz-mc-font:        'Inter', sans-serif;
+    --inkiz-mc-font-serif:  'Playfair Display', serif;
+    --inkiz-mc-like-color:  #e04060;
+
+    font-family: var(--inkiz-mc-font);
+    max-width: 1100px;
+    margin: 0 auto;
+    color: var(--inkiz-mc-accent);
+}
+
+/* ---------- Slides ---------- */
+.inkiz-mc-stage {
+    position: relative;
+}
+
+.inkiz-mc-slide {
+    display: none;
+    animation: inkizFadeIn var(--inkiz-mc-transition);
+}
+
+.inkiz-mc-slide--active {
+    display: block;
+}
+
+@keyframes inkizFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Hero: image + info side-by-side ---------- */
+.inkiz-mc-hero {
+    display: flex;
+    gap: 32px;
+    align-items: stretch;
+}
+
+.inkiz-mc-image-wrap {
+    position: relative;
+    border-radius: var(--inkiz-mc-radius);
+    overflow: hidden;
+    background: #f0f0f0;
+    box-shadow: var(--inkiz-mc-shadow);
+    flex: 3;
+    min-width: 0;
+    aspect-ratio: 4 / 3;
+}
+
+.inkiz-mc-main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s ease;
+}
+
+.inkiz-mc-image-wrap:hover .inkiz-mc-main-image {
+    transform: scale(1.02);
+}
+
+/* ---------- Info panel (right of image) ---------- */
+.inkiz-mc-info {
+    flex: 2;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8px 0;
+}
+
+.inkiz-mc-title {
+    font-family: var(--inkiz-mc-font-serif);
+    font-size: 1.6rem;
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 0 0 16px;
+    color: var(--inkiz-mc-accent);
+}
+
+.inkiz-mc-description {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #555;
+    margin-bottom: 24px;
+    flex-grow: 1;
+}
+
+.inkiz-mc-description p {
+    margin: 0 0 8px;
+}
+
+/* ---------- Like button ---------- */
+.inkiz-mc-like-wrap {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+}
+
+.inkiz-mc-like-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: 1px solid #e0e0e0;
+    border-radius: 24px;
+    padding: 8px 18px;
+    cursor: pointer;
+    font-family: var(--inkiz-mc-font);
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #666;
+    transition: color 0.25s, border-color 0.25s, transform 0.15s;
+}
+
+.inkiz-mc-like-btn:hover {
+    color: var(--inkiz-mc-like-color);
+    border-color: var(--inkiz-mc-like-color);
+    transform: scale(1.04);
+}
+
+.inkiz-mc-like-btn.inkiz-mc-liked {
+    color: var(--inkiz-mc-like-color);
+    border-color: var(--inkiz-mc-like-color);
+}
+
+.inkiz-mc-heart {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.inkiz-mc-like-btn.inkiz-mc-liked .inkiz-mc-heart {
+    fill: var(--inkiz-mc-like-color);
+    transform: scale(1.15);
+}
+
+@keyframes inkizHeartPop {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.35); }
+    100% { transform: scale(1.15); }
+}
+
+.inkiz-mc-like-btn.inkiz-mc-liked .inkiz-mc-heart {
+    animation: inkizHeartPop 0.4s ease;
+}
+
+.inkiz-mc-like-count {
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Navigation arrows ---------- */
+.inkiz-mc-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(6px);
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+    z-index: 2;
+    box-shadow: var(--inkiz-mc-shadow);
+}
+
+.inkiz-mc-arrow--prev { left: 14px; }
+.inkiz-mc-arrow--next { right: 14px; }
+
+.inkiz-mc-arrow:hover {
+    background: #fff;
+    transform: translateY(-50%) scale(1.1);
+}
+
+
+/* ---------- Related products (outside slides) ---------- */
+.inkiz-mc-related-panels {
+    margin-top: 32px;
+}
+
+.inkiz-mc-related-panel {
+    display: none;
+    animation: inkizFadeIn var(--inkiz-mc-transition);
+}
+
+.inkiz-mc-related-panel--active {
+    display: block;
+}
+
+.inkiz-mc-related-title {
+    font-family: var(--inkiz-mc-font);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #888;
+    margin: 0 0 14px;
+}
+
+.inkiz-mc-related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 14px;
+}
+
+.inkiz-mc-product-card {
+    text-decoration: none;
+    color: var(--inkiz-mc-accent);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.25s;
+    background: #fafafa;
+    border: 1px solid #eee;
+}
+
+.inkiz-mc-product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+}
+
+.inkiz-mc-product-thumb {
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: #eee;
+}
+
+.inkiz-mc-product-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.inkiz-mc-product-card:hover .inkiz-mc-product-thumb img {
+    transform: scale(1.06);
+}
+
+.inkiz-mc-product-no-thumb {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #e0e0e0, #c8c8c8);
+}
+
+.inkiz-mc-product-title {
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 6px 10px 10px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ---------- Collapsible comments (outside slides) ---------- */
+.inkiz-mc-comments-panels {
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid #e8e8e8;
+}
+
+.inkiz-mc-comments-panel {
+    display: none;
+    animation: inkizFadeIn var(--inkiz-mc-transition);
+}
+
+.inkiz-mc-comments-panel--active {
+    display: block;
+}
+
+/* Toggle button */
+.inkiz-mc-comments-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: var(--inkiz-mc-font);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #888;
+    transition: color 0.2s;
+}
+
+.inkiz-mc-comments-toggle:hover {
+    color: var(--inkiz-mc-accent);
+}
+
+.inkiz-mc-comments-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f0f0;
+    color: #555;
+    font-size: 0.72rem;
+    font-weight: 600;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 11px;
+    padding: 0 6px;
+    letter-spacing: 0;
+}
+
+.inkiz-mc-chevron {
+    margin-left: auto;
+    transition: transform 0.3s ease;
+}
+
+.inkiz-mc-comments-toggle[aria-expanded="true"] .inkiz-mc-chevron {
+    transform: rotate(180deg);
+}
+
+/* Collapsible body */
+.inkiz-mc-comments-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+    opacity: 0;
+}
+
+.inkiz-mc-comments-body.inkiz-mc-comments-body--open {
+    max-height: 2000px;
+    opacity: 1;
+    margin-top: 18px;
+}
+
+/* Comment list & form resets */
+.inkiz-mc-comment-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 28px;
+}
+
+.inkiz-mc-comment-list .comment {
+    padding: 14px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.inkiz-mc-comment-list .comment-author {
+    font-weight: 600;
+    font-size: 0.88rem;
+}
+
+.inkiz-mc-comment-list .comment-content {
+    margin-top: 6px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #333;
+}
+
+.inkiz-mc-comments-body .comment-form input[type="text"],
+.inkiz-mc-comments-body .comment-form input[type="email"],
+.inkiz-mc-comments-body .comment-form input[type="url"],
+.inkiz-mc-comments-body .comment-form textarea {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-family: var(--inkiz-mc-font);
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.inkiz-mc-comments-body .comment-form input:focus,
+.inkiz-mc-comments-body .comment-form textarea:focus {
+    border-color: var(--inkiz-mc-accent);
+}
+
+.inkiz-mc-comments-body .comment-form .form-submit input {
+    background: var(--inkiz-mc-accent);
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+    width: auto;
+}
+
+.inkiz-mc-comments-body .comment-form .form-submit input:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+.inkiz-mc-login-notice {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.inkiz-mc-login-notice a {
+    color: var(--inkiz-mc-accent);
+    font-weight: 500;
+}
+
+.inkiz-mc-error {
+    color: #b32d2e;
+    font-size: 0.9rem;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+    .inkiz-mc-hero {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .inkiz-mc-image-wrap {
+        flex: none;
+        width: 100%;
+    }
+
+    .inkiz-mc-info {
+        flex: none;
+        padding: 0 4px;
+    }
+
+    .inkiz-mc-title {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 680px) {
+    .inkiz-mc-related-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+    .inkiz-mc-arrow {
+        width: 36px;
+        height: 36px;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 440px) {
+    .inkiz-mc-title {
+        font-size: 1.15rem;
+    }
+    .inkiz-mc-description {
+        font-size: 0.88rem;
+    }
+}

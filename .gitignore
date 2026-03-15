@@ -1,0 +1,36 @@
+# WordPress development
+wp-content/
+wp-admin/
+wp-includes/
+*.sql
+*.tar.gz
+*.zip
+
+# PHPUnit & Tests
+/wordpress-tests-lib/
+/tmp/wordpress/
+phpunit.xml
+.phpunit.result.cache
+
+# Composer
+vendor/
+composer.lock
+
+# Build files
+/build/
+
+# IDE & OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Any random log files
+*.log
+debug.log
+
+# BMad specific
+.bmad-core/
+.agents/
+AGENTS.md
+skills-lock.json

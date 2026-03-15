@@ -1,0 +1,36 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - '.github/**'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Package Plugin
+        run: bash package.sh
+
+      - name: Get Version
+        id: version
+        run: |
+          VERSION=$(grep -i "Version:" inkiz-media-carousel.php | awk -F' ' '{print $NF}' | tr -d '\r')
+          echo "version=v$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: Inkiz Media Carousel ${{ steps.version.outputs.version }}
+          files: inkiz-media-carousel-${{ steps.version.outputs.version }}.zip
+          generate_release_notes: true
