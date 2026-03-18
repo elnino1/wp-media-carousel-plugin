@@ -22,7 +22,7 @@ class Test_Inkiz_Media_Carousel extends WP_UnitTestCase {
 
     public function test_shortcode_requires_ids() {
         $output = do_shortcode( '[inkiz_media_carousel]' );
-        $this->assertStringContainsString( 'Veuillez spécifier des IDs de médias', $output );
+        $this->assertStringContainsString( 'Veuillez spécifier un tag ou des IDs de médias', $output );
     }
 
     public function test_shortcode_requires_valid_ids() {

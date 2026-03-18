@@ -64,9 +64,12 @@ class Shortcode {
     public function render( array $atts ): string {
         $a = shortcode_atts(
             [
-                'ids'      => '',
-                'columns'  => 4,
-                'autoplay' => 0,
+                'ids'        => '',
+                'tag'        => '',
+                'columns'    => 4,
+                'autoplay'   => 0,
+                'thumbnails' => 'none', // 'top', 'bottom', 'none'
+                'filterable' => 'false',
             ],
             $atts,
             'inkiz_media_carousel'
@@ -75,32 +78,116 @@ class Shortcode {
         $ids = array_filter(
             array_map( 'absint', explode( ',', $a['ids'] ) )
         );
+        $tag = sanitize_text_field( $a['tag'] );
 
-        if ( empty( $ids ) ) {
-            return '<p class="inkiz-mc-error">' . esc_html__( 'Veuillez spécifier des IDs de médias : [inkiz_media_carousel ids="1,2,3"]', 'inkiz-media-carousel' ) . '</p>';
+        if ( empty( $ids ) && empty( $tag ) ) {
+            return '<p class="inkiz-mc-error">' . esc_html__( 'Veuillez spécifier un tag ou des IDs de médias.', 'inkiz-media-carousel' ) . '</p>';
         }
 
         // Fetch attachment posts.
-        $attachments = get_posts( [
+        $query_args = [
             'post_type'   => 'attachment',
-            'post__in'    => $ids,
-            'orderby'     => 'post__in',
-            'numberposts' => count( $ids ),
             'post_status' => 'inherit',
-        ] );
+            'numberposts' => -1, // Load all matching, or let user limit? Usually carousels want all matching tags
+        ];
 
-        if ( empty( $attachments ) ) {
-            return '<p class="inkiz-mc-error">' . esc_html__( 'Aucun média trouvé pour les IDs fournis.', 'inkiz-media-carousel' ) . '</p>';
+        // If tag is present, prioritize it.
+        if ( ! empty( $tag ) ) {
+            $query_args['tax_query'] = [
+                [
+                    'taxonomy' => 'post_tag',
+                    'field'    => 'slug',
+                    'terms'    => $tag,
+                ],
+            ];
+            // If they also passed IDs, we could constrain by them, but normally it's one or the other.
+        } else {
+            $query_args['post__in'] = $ids;
+            $query_args['orderby']  = 'post__in';
+            $query_args['numberposts'] = count( $ids );
         }
 
-        $columns  = absint( $a['columns'] );
-        $autoplay = absint( $a['autoplay'] );
+        $attachments = get_posts( $query_args );
+
+        if ( empty( $attachments ) ) {
+            return '<p class="inkiz-mc-error">' . esc_html__( 'Aucun média trouvé.', 'inkiz-media-carousel' ) . '</p>';
+        }
+
+        $columns    = absint( $a['columns'] );
+        $autoplay   = absint( $a['autoplay'] );
+        $thumbnails = in_array( $a['thumbnails'], [ 'top', 'bottom', 'none' ], true ) ? $a['thumbnails'] : 'none';
+        $filterable = filter_var( $a['filterable'], FILTER_VALIDATE_BOOLEAN );
+
+        // 1. Gather Categories (if filterable)
+        $categories_map = [];
+        if ( $filterable ) {
+            foreach ( $attachments as $att ) {
+                $cats = wp_get_post_terms( $att->ID, 'category' );
+                if ( ! is_wp_error( $cats ) && ! empty( $cats ) ) {
+                    foreach ( $cats as $c ) {
+                        $categories_map[ $c->term_id ] = $c->name;
+                    }
+                }
+            }
+        }
+
+        // 2. Generate Thumbnails HTML (if top or bottom)
+        $thumbnails_html = '';
+        if ( 'none' !== $thumbnails ) {
+            ob_start();
+            ?>
+            <div class="inkiz-mc-thumbnails inkiz-mc-thumbnails--<?php echo esc_attr( $thumbnails ); ?>">
+                <div class="inkiz-mc-thumbnails-track">
+                    <?php foreach ( $attachments as $index => $att ) : 
+                        $thumb = wp_get_attachment_image_src( $att->ID, 'thumbnail' );
+                        $src   = $thumb ? esc_url( $thumb[0] ) : esc_url( wp_get_attachment_url( $att->ID ) );
+                        $active = ( 0 === $index ) ? ' inkiz-mc-thumb--active' : '';
+
+                        // Determine slide categories for filtering
+                        $slide_cats = wp_get_post_terms( $att->ID, 'category', [ 'fields' => 'ids' ] );
+                        $cats_str   = ( ! is_wp_error( $slide_cats ) && ! empty( $slide_cats ) ) ? implode( ',', $slide_cats ) : '';
+                        ?>
+                        <button class="inkiz-mc-thumb<?php echo esc_attr( $active ); ?>"
+                                data-index="<?php echo esc_attr( $index ); ?>"
+                                data-cats="<?php echo esc_attr( $cats_str ); ?>"
+                                aria-label="<?php esc_attr_e( 'Aller à la diapositive', 'inkiz-media-carousel' ); ?> <?php echo ( $index + 1 ); ?>"
+                                style="background-image: url('<?php echo $src; ?>');">
+                        </button>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php
+            $thumbnails_html = ob_get_clean();
+        }
+
+        // 3. Generate Filters HTML
+        $filters_html = '';
+        if ( $filterable && ! empty( $categories_map ) ) {
+            ob_start();
+            ?>
+            <div class="inkiz-mc-filters">
+                <button class="inkiz-mc-filter-btn inkiz-mc-filter--active" data-filter="all">
+                    <?php esc_html_e( 'Tous', 'inkiz-media-carousel' ); ?>
+                </button>
+                <?php foreach ( $categories_map as $cat_id => $cat_name ) : ?>
+                    <button class="inkiz-mc-filter-btn" data-filter="<?php echo esc_attr( $cat_id ); ?>">
+                        <?php echo esc_html( $cat_name ); ?>
+                    </button>
+                <?php endforeach; ?>
+            </div>
+            <?php
+            $filters_html = ob_get_clean();
+        }
 
         ob_start();
         ?>
         <div class="inkiz-mc-wrapper"
              data-autoplay="<?php echo esc_attr( $autoplay ); ?>"
              data-current="0">
+
+            <?php echo $filters_html; ?>
+
+            <?php if ( 'top' === $thumbnails ) echo $thumbnails_html; ?>
 
             <!-- Main slide area -->
             <div class="inkiz-mc-stage">
@@ -114,10 +201,14 @@ class Shortcode {
                     $tags     = wp_get_post_tags( $att->ID, [ 'fields' => 'slugs' ] );
                     $tags_str = esc_attr( implode( ',', $tags ) );
                     $likes    = Likes::get_count( $att->ID );
+                    $cats_args  = [ 'fields' => 'ids' ];
+                    $slide_cats = wp_get_post_terms( $att->ID, 'category', $cats_args );
+                    $cats_str   = ( ! is_wp_error( $slide_cats ) && ! empty( $slide_cats ) ) ? implode( ',', $slide_cats ) : '';
                     ?>
                     <div class="inkiz-mc-slide<?php echo esc_attr( $active ); ?>"
                          data-id="<?php echo esc_attr( $att->ID ); ?>"
                          data-tags="<?php echo $tags_str; ?>"
+                         data-cats="<?php echo esc_attr( $cats_str ); ?>"
                          data-index="<?php echo esc_attr( $index ); ?>">
 
                         <div class="inkiz-mc-hero">
@@ -155,6 +246,8 @@ class Shortcode {
                     </div><!-- .inkiz-mc-slide -->
                 <?php endforeach; ?>
             </div><!-- .inkiz-mc-stage -->
+
+            <?php if ( 'bottom' === $thumbnails ) echo $thumbnails_html; ?>
 
             <!-- Related products (outside slides, one panel per attachment, swapped by JS) -->
             <?php if ( class_exists( 'WooCommerce' ) ) : ?>
