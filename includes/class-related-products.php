@@ -1,6 +1,6 @@
 <?php
 
-namespace Inkiz_MC;
+namespace WP_MC;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -22,7 +22,7 @@ class Related_Products {
         }
 
         // Optional prefix filter set in plugin settings.
-        $prefix = sanitize_text_field( (string) get_option( 'inkiz_mc_tag_prefix', '' ) );
+        $prefix = sanitize_text_field( (string) get_option( 'wp_mc_tag_prefix', '' ) );
         if ( $prefix ) {
             $tag_slugs = array_filter( $tag_slugs, function ( string $slug ) use ( $prefix ) {
                 return str_starts_with( $slug, $prefix );
@@ -68,16 +68,16 @@ class Related_Products {
             }
             ?>
             <a href="<?php echo esc_url( $product_url ); ?>"
-               class="inkiz-mc-product-card"
+               class="wp-mc-product-card"
                title="<?php echo esc_attr( $title ); ?>">
-                <div class="inkiz-mc-product-thumb">
+                <div class="wp-mc-product-thumb">
                     <?php if ( $thumb ) : ?>
                         <?php echo $thumb; ?>
                     <?php else : ?>
-                        <div class="inkiz-mc-product-no-thumb"></div>
+                        <div class="wp-mc-product-no-thumb"></div>
                     <?php endif; ?>
                 </div>
-                <span class="inkiz-mc-product-title"><?php echo esc_html( $title ); ?></span>
+                <span class="wp-mc-product-title"><?php echo esc_html( $title ); ?></span>
             </a>
             <?php
         endwhile;

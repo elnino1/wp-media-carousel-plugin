@@ -1,5 +1,5 @@
 /**
- * Inkiz Media Carousel – Vanilla JS Controller
+ * WordPress Media Carousel – Vanilla JS Controller
  * Handles slide switching, likes (AJAX/localStorage), and collapsible comments.
  */
 (function () {
@@ -10,12 +10,12 @@
      * @param {HTMLElement} wrapper
      */
     function initCarousel(wrapper) {
-        let slides = Array.from(wrapper.querySelectorAll('.inkiz-mc-slide'));
-        const relatedPanels = Array.from(wrapper.querySelectorAll('.inkiz-mc-related-panel'));
-        const commentPanels = Array.from(wrapper.querySelectorAll('.inkiz-mc-comments-panel'));
-        const filterBtns = Array.from(wrapper.querySelectorAll('.inkiz-mc-filter-btn'));
-        let thumbnails = Array.from(wrapper.querySelectorAll('.inkiz-mc-thumb'));
-        const thumbnailsTrack = wrapper.querySelector('.inkiz-mc-thumbnails-track');
+        let slides = Array.from(wrapper.querySelectorAll('.wp-mc-slide'));
+        const relatedPanels = Array.from(wrapper.querySelectorAll('.wp-mc-related-panel'));
+        const commentPanels = Array.from(wrapper.querySelectorAll('.wp-mc-comments-panel'));
+        const filterBtns = Array.from(wrapper.querySelectorAll('.wp-mc-filter-btn'));
+        let thumbnails = Array.from(wrapper.querySelectorAll('.wp-mc-thumb'));
+        const thumbnailsTrack = wrapper.querySelector('.wp-mc-thumbnails-track');
         const autoplay = parseInt(wrapper.dataset.autoplay, 10) || 0;
 
         let current = 0;
@@ -51,19 +51,19 @@
             }
 
             // Deactivate current
-            if (slides[current]) slides[current].classList.remove('inkiz-mc-slide--active');
-            if (relatedPanels[current]) relatedPanels[current].classList.remove('inkiz-mc-related-panel--active');
-            if (commentPanels[current]) commentPanels[current].classList.remove('inkiz-mc-comments-panel--active');
-            if (thumbnails[current]) thumbnails[current].classList.remove('inkiz-mc-thumb--active');
+            if (slides[current]) slides[current].classList.remove('wp-mc-slide--active');
+            if (relatedPanels[current]) relatedPanels[current].classList.remove('wp-mc-related-panel--active');
+            if (commentPanels[current]) commentPanels[current].classList.remove('wp-mc-comments-panel--active');
+            if (thumbnails[current]) thumbnails[current].classList.remove('wp-mc-thumb--active');
 
             current = index;
 
             // Activate new
-            if (slides[current]) slides[current].classList.add('inkiz-mc-slide--active');
-            if (relatedPanels[current]) relatedPanels[current].classList.add('inkiz-mc-related-panel--active');
-            if (commentPanels[current]) commentPanels[current].classList.add('inkiz-mc-comments-panel--active');
+            if (slides[current]) slides[current].classList.add('wp-mc-slide--active');
+            if (relatedPanels[current]) relatedPanels[current].classList.add('wp-mc-related-panel--active');
+            if (commentPanels[current]) commentPanels[current].classList.add('wp-mc-comments-panel--active');
             if (thumbnails[current]) {
-                thumbnails[current].classList.add('inkiz-mc-thumb--active');
+                thumbnails[current].classList.add('wp-mc-thumb--active');
                 // Auto-scroll thumbnail track
                 if (thumbnailsTrack) {
                     const t = thumbnails[current];
@@ -86,7 +86,7 @@
         }
 
         /** Arrow buttons — attached to every slide */
-        wrapper.querySelectorAll('.inkiz-mc-arrow--prev').forEach(btn => {
+        wrapper.querySelectorAll('.wp-mc-arrow--prev').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -94,7 +94,7 @@
                 goTo(current - 1, true);
             });
         });
-        wrapper.querySelectorAll('.inkiz-mc-arrow--next').forEach(btn => {
+        wrapper.querySelectorAll('.wp-mc-arrow--next').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -116,7 +116,7 @@
 
         /** Touch / swipe support on images */
         let touchStartX = null;
-        const stage = wrapper.querySelector('.inkiz-mc-stage');
+        const stage = wrapper.querySelector('.wp-mc-stage');
         if (stage) {
             stage.addEventListener('touchstart', (e) => {
                 touchStartX = e.touches[0].clientX;
@@ -132,35 +132,35 @@
         }
 
         // Like buttons
-        wrapper.querySelectorAll('.inkiz-mc-like-btn').forEach(btn => {
+        wrapper.querySelectorAll('.wp-mc-like-btn').forEach(btn => {
             const id = btn.dataset.id;
-            const storageKey = 'inkiz_mc_liked_' + id;
+            const storageKey = 'wp_mc_liked_' + id;
 
             // Check localized state
             if (localStorage.getItem(storageKey)) {
-                btn.classList.add('inkiz-mc-liked');
+                btn.classList.add('wp-mc-liked');
             }
 
             btn.addEventListener('click', () => {
                 // Prevent duplicate likes
-                if (btn.classList.contains('inkiz-mc-liked')) return;
+                if (btn.classList.contains('wp-mc-liked')) return;
 
                 // Optimistic UI update
-                btn.classList.add('inkiz-mc-liked');
+                btn.classList.add('wp-mc-liked');
                 localStorage.setItem(storageKey, '1');
-                const countSpan = btn.querySelector('.inkiz-mc-like-count');
+                const countSpan = btn.querySelector('.wp-mc-like-count');
                 if (countSpan) {
                     countSpan.textContent = parseInt(countSpan.textContent, 10) + 1;
                 }
 
                 // AJAX call
-                if (typeof inkizMC !== 'undefined') {
+                if (typeof wpMC !== 'undefined') {
                     const data = new URLSearchParams();
-                    data.append('action', 'inkiz_mc_like');
-                    data.append('nonce', inkizMC.nonce);
+                    data.append('action', 'wp_mc_like');
+                    data.append('nonce', wpMC.nonce);
                     data.append('attachment_id', id);
 
-                    fetch(inkizMC.ajaxUrl, {
+                    fetch(wpMC.ajaxUrl, {
                         method: 'POST',
                         body: data
                     }).catch(err => console.error('Like error:', err));
@@ -169,9 +169,9 @@
         });
 
         // Collapsible Comments
-        wrapper.querySelectorAll('.inkiz-mc-comments-panel').forEach(panel => {
-            const toggleBtn = panel.querySelector('.inkiz-mc-comments-toggle');
-            const bodyDiv = panel.querySelector('.inkiz-mc-comments-body');
+        wrapper.querySelectorAll('.wp-mc-comments-panel').forEach(panel => {
+            const toggleBtn = panel.querySelector('.wp-mc-comments-toggle');
+            const bodyDiv = panel.querySelector('.wp-mc-comments-body');
 
             if (!toggleBtn || !bodyDiv) return;
 
@@ -180,11 +180,11 @@
 
                 if (isExpanded) {
                     toggleBtn.setAttribute('aria-expanded', 'false');
-                    bodyDiv.classList.remove('inkiz-mc-comments-body--open');
+                    bodyDiv.classList.remove('wp-mc-comments-body--open');
                     bodyDiv.setAttribute('aria-hidden', 'true');
                 } else {
                     toggleBtn.setAttribute('aria-expanded', 'true');
-                    bodyDiv.classList.add('inkiz-mc-comments-body--open');
+                    bodyDiv.classList.add('wp-mc-comments-body--open');
                     bodyDiv.setAttribute('aria-hidden', 'false');
                 }
             });
@@ -206,8 +206,8 @@
                     e.preventDefault();
 
                     // Update active button state
-                    filterBtns.forEach(b => b.classList.remove('inkiz-mc-filter--active'));
-                    btn.classList.add('inkiz-mc-filter--active');
+                    filterBtns.forEach(b => b.classList.remove('wp-mc-filter--active'));
+                    btn.classList.add('wp-mc-filter--active');
 
                     const catFilter = btn.dataset.filter;
                     let firstVisibleSlideIndex = null;
@@ -241,7 +241,7 @@
 
     /** Boot all carousel instances on the page */
     function bootAll() {
-        document.querySelectorAll('.inkiz-mc-wrapper').forEach(initCarousel);
+        document.querySelectorAll('.wp-mc-wrapper').forEach(initCarousel);
     }
 
     if (document.readyState === 'loading') {

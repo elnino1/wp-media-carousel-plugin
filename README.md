@@ -1,4 +1,4 @@
-# Inkiz Media Carousel
+# WordPress Media Carousel
 
 A WordPress plugin to display a media carousel linked to WooCommerce products. This plugin allows you to showcase media attachments in a responsive carousel, complete with likes, collapsible comments, associated WooCommerce products, thumbnail navigation, and category filtering.
 
@@ -12,7 +12,7 @@ A WordPress plugin to display a media carousel linked to WooCommerce products. T
 
 ## Usage
 
-You can display the carousel anywhere on your site using the `[inkiz_media_carousel]` shortcode.
+You can display the carousel anywhere on your site using the `[wp_media_carousel]` shortcode.
 
 ### Shortcode Options
 
@@ -31,17 +31,17 @@ The shortcode accepts several attributes to customize what is displayed and how 
 
 **1. Standard use with Tag and bottom Thumbnails:**
 ```shortcode
-[inkiz_media_carousel tag="artwork" thumbnails="bottom" columns="1"]
+[wp_media_carousel tag="artwork" thumbnails="bottom" columns="1"]
 ```
 
 **2. Filterable gallery of artwork:**
 ```shortcode
-[inkiz_media_carousel tag="artwork" filterable="true" thumbnails="bottom" columns="3"]
+[wp_media_carousel tag="artwork" filterable="true" thumbnails="bottom" columns="3"]
 ```
 
 **3. Specific media IDs with Autoplay:**
 ```shortcode
-[inkiz_media_carousel ids="120,432,65" autoplay="5000" thumbnails="none"]
+[wp_media_carousel ids="120,432,65" autoplay="5000" thumbnails="none"]
 ```
 
 ## Setup & Administration
