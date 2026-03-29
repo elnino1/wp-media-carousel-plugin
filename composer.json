@@ -1,5 +1,5 @@
 {
-    "name": "inkiz/wp-media-carousel-plugin",
+    "name": "wordpress/wp-media-carousel-plugin",
     "description": "Displays a media carousel from the WordPress Media Library with tag-matched WooCommerce products.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",

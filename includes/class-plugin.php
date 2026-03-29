@@ -1,6 +1,6 @@
 <?php
 
-namespace Inkiz_MC;
+namespace WP_MC;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -26,12 +26,12 @@ final class Plugin {
     }
 
     private function load_includes(): void {
-        require_once INKIZ_MC_DIR . 'includes/class-attachment-support.php';
-        require_once INKIZ_MC_DIR . 'includes/class-shortcode.php';
-        require_once INKIZ_MC_DIR . 'includes/class-related-products.php';
-        require_once INKIZ_MC_DIR . 'includes/class-likes.php';
+        require_once WP_MC_DIR . 'includes/class-attachment-support.php';
+        require_once WP_MC_DIR . 'includes/class-shortcode.php';
+        require_once WP_MC_DIR . 'includes/class-related-products.php';
+        require_once WP_MC_DIR . 'includes/class-likes.php';
         if ( is_admin() ) {
-            require_once INKIZ_MC_DIR . 'includes/class-admin.php';
+            require_once WP_MC_DIR . 'includes/class-admin.php';
         }
     }
 
@@ -60,9 +60,9 @@ final class Plugin {
 
     public function load_textdomain(): void {
         load_plugin_textdomain(
-            'inkiz-media-carousel',
+            'wp-media-carousel',
             false,
-            dirname( plugin_basename( INKIZ_MC_FILE ) ) . '/languages'
+            dirname( plugin_basename( WP_MC_FILE ) ) . '/languages'
         );
     }
 }

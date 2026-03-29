@@ -1,6 +1,6 @@
 <?php
 
-namespace Inkiz_MC;
+namespace WP_MC;
 
 defined('ABSPATH') || exit;
 
