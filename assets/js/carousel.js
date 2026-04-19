@@ -8,8 +8,10 @@
     /**
      * Initialize one carousel wrapper element.
      * @param {HTMLElement} wrapper
+     * @param {number|null} initialId - Optional attachment ID to navigate to
+     * @returns {boolean} - True if deep-link was applied, false otherwise
      */
-    function initCarousel(wrapper) {
+    function initCarousel(wrapper, initialId) {
         let slides = Array.from(wrapper.querySelectorAll('.wp-mc-slide'));
         const relatedPanels = Array.from(wrapper.querySelectorAll('.wp-mc-related-panel'));
         const commentPanels = Array.from(wrapper.querySelectorAll('.wp-mc-comments-panel'));
@@ -237,11 +239,30 @@
 
         // Start autoplay.
         if (autoplay) resetAutoplay();
+
+        // Deep-link: if a wp_mc_id param was provided, navigate to the matching slide.
+        if (initialId) {
+            const target = slides.findIndex(s => s.dataset.id === String(initialId));
+            if (target !== -1) {
+                goTo(target, false);
+                wrapper.scrollIntoView({ behavior: 'smooth' });
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** Boot all carousel instances on the page */
     function bootAll() {
-        document.querySelectorAll('.wp-mc-wrapper').forEach(initCarousel);
+        const params = new URLSearchParams(window.location.search);
+        const initialId = params.get('wp_mc_id') || null;
+        let linked = false;
+        document.querySelectorAll('.wp-mc-wrapper').forEach(function (wrapper) {
+            if (initCarousel(wrapper, linked ? null : initialId)) {
+                linked = true;
+            }
+        });
     }
 
     if (document.readyState === 'loading') {
