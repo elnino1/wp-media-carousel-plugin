@@ -23,7 +23,7 @@
         let current = 0;
         let timer = null;
 
-        if (slides.length === 0) return;
+        if (slides.length === 0) return false;
 
         /** Activate slide by index */
         function goTo(index, wrap) {
@@ -241,9 +241,9 @@
         if (autoplay) resetAutoplay();
 
         // Deep-link: if a wp_mc_id param was provided, navigate to the matching slide.
-        if (initialId) {
-            const target = slides.findIndex(s => s.dataset.id === String(initialId));
-            if (target !== -1) {
+        if (initialId !== null) {
+            const target = slides.findIndex(s => s.dataset.id === initialId);
+            if (target !== -1 && slides[target].style.display !== 'none') {
                 goTo(target, false);
                 wrapper.scrollIntoView({ behavior: 'smooth' });
                 return true;
