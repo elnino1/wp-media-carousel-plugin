@@ -1,15 +1,11 @@
 name: Build and Release
 
 on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - '**.md'
-      - '.github/**'
+  release:
+    types: [published]
 
 jobs:
-  release:
+  build-and-upload:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -24,13 +20,14 @@ jobs:
       - name: Get Version
         id: version
         run: |
-          VERSION=$(grep -i "Version:" inkiz-media-carousel.php | awk -F' ' '{print $NF}' | tr -d '\r')
-          echo "version=v$VERSION" >> $GITHUB_OUTPUT
+          VERSION=$(grep -i "^ \* Version:" wp-media-carousel.php | awk -F':' '{print $2}' | xargs | tr -d '\r')
+          if [ -z "$VERSION" ]; then
+            echo "Error: Could not extract version from wp-media-carousel.php" >&2
+            exit 1
+          fi
+          echo "zip=wp-media-carousel-${VERSION}.zip" >> $GITHUB_OUTPUT
 
-      - name: Create Release
+      - name: Upload Release Asset
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.version.outputs.version }}
-          name: WP Media Carousel ${{ steps.version.outputs.version }}
-          files: wp-media-carousel-${{ steps.version.outputs.version }}.zip
-          generate_release_notes: true
+          files: ${{ steps.version.outputs.zip }}
