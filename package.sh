@@ -5,7 +5,7 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
-PLUGIN_SLUG="inkiz-media-carousel"
+PLUGIN_SLUG="wp-media-carousel"
 
 # Extract version securely (removes carriage returns and trims spaces)
 VERSION=$(grep -i "^ \* Version:" "${PLUGIN_SLUG}.php" | awk -F':' '{print $2}' | xargs | tr -d '\r')
