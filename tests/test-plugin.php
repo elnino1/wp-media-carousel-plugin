@@ -29,4 +29,12 @@ class Test_Inkiz_Media_Carousel extends WP_UnitTestCase {
         $output = do_shortcode( '[wp_media_carousel ids="999999"]' );
         $this->assertStringContainsString( 'Aucun média trouvé', $output );
     }
+
+    public function test_shortcode_renders_image_wrap_and_main_image() {
+        $attachment_id = $this->factory->attachment->create_upload_object( DIR_TESTDATA . '/images/test-image.jpg' );
+        $output = do_shortcode( '[wp_media_carousel ids="' . $attachment_id . '"]' );
+        $this->assertStringContainsString( 'wp-mc-image-wrap', $output );
+        $this->assertStringContainsString( 'wp-mc-main-image', $output );
+        wp_delete_attachment( $attachment_id, true );
+    }
 }
