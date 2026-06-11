@@ -434,6 +434,23 @@
     transform: translateY(-1px);
 }
 
+.wp-mc-comments-body .wp-mc-logged-in-as {
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.8;
+}
+
+.wp-mc-comments-body .wp-mc-logout-link {
+    color: var(--wp-mc-accent);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.wp-mc-comments-body .wp-mc-logout-link:hover {
+    opacity: 0.8;
+}
+
 .wp-mc-login-notice {
     font-size: 0.9rem;
     color: #555;
@@ -614,6 +631,7 @@
     max-height: 85vh;
     object-fit: contain;
     display: block;
+    background: #fff;
     transition: transform 0.15s ease;
     transform-origin: center center;
     user-select: none;
@@ -625,8 +643,8 @@
     top: 16px;
     right: 20px;
     z-index: 10000;
-    background: rgba(255, 255, 255, 0.15);
-    border: none;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.35);
     color: #fff;
     font-size: 1.4rem;
     line-height: 1;
@@ -641,7 +659,7 @@
 }
 
 .wp-mc-lightbox-close:hover {
-    background: rgba(255, 255, 255, 0.30);
+    background: rgba(0, 0, 0, 0.80);
 }
 
 .wp-mc-lightbox-controls {
@@ -656,8 +674,8 @@
 
 .wp-mc-lightbox-zoom-in,
 .wp-mc-lightbox-zoom-out {
-    background: rgba(255, 255, 255, 0.15);
-    border: none;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.35);
     color: #fff;
     font-size: 1.5rem;
     line-height: 1;
@@ -673,5 +691,34 @@
 
 .wp-mc-lightbox-zoom-in:hover,
 .wp-mc-lightbox-zoom-out:hover {
-    background: rgba(255, 255, 255, 0.30);
+    background: rgba(0, 0, 0, 0.80);
+}
+
+.wp-mc-lightbox-prev,
+.wp-mc-lightbox-next {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: #fff;
+    font-size: 1.8rem;
+    line-height: 1;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.wp-mc-lightbox-prev { left: 20px; }
+.wp-mc-lightbox-next { right: 20px; }
+
+.wp-mc-lightbox-prev:hover,
+.wp-mc-lightbox-next:hover {
+    background: rgba(0, 0, 0, 0.80);
 }

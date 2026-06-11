@@ -321,10 +321,30 @@ class Shortcode {
                                 // Comment form.
                                 $require_login = (bool) get_option( 'wp_mc_require_login_comment', false );
                                 if ( ! $require_login || is_user_logged_in() ) {
+                                    // Custom logged-in notice: no profile-edit link, logout link on its own,
+                                    // required-fields note on a separate line.
+                                    $current_user  = wp_get_current_user();
+                                    $logged_in_as  = sprintf(
+                                        '<p class="logged-in-as wp-mc-logged-in-as">%s <a class="wp-mc-logout-link" href="%s">%s</a><br>%s</p>',
+                                        sprintf(
+                                            /* translators: %s: user display name */
+                                            esc_html__( 'Connecté en tant que %s.', 'wp-media-carousel' ),
+                                            esc_html( $current_user->display_name )
+                                        ),
+                                        esc_url( wp_logout_url( get_permalink( $att->ID ) ) ),
+                                        esc_html__( 'Se déconnecter', 'wp-media-carousel' ),
+                                        sprintf(
+                                            /* translators: %s: asterisk symbol */
+                                            esc_html__( 'Les champs obligatoires sont indiqués avec %s', 'wp-media-carousel' ),
+                                            '<span class="required">*</span>'
+                                        )
+                                    );
+
                                     comment_form( [
                                         'id_form'       => 'wp-mc-comment-form-' . esc_attr( $att->ID ),
                                         'title_reply'   => esc_html__( 'Laisser un commentaire', 'wp-media-carousel' ),
                                         'label_submit'  => esc_html__( 'Publier', 'wp-media-carousel' ),
+                                        'logged_in_as'  => $logged_in_as,
                                     ], $att->ID );
                                 } elseif ( $require_login && ! is_user_logged_in() ) {
                                     echo '<p class="wp-mc-login-notice">';
