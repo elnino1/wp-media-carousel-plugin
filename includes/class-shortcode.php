@@ -195,7 +195,10 @@ class Shortcode {
                     $img_url  = wp_get_attachment_url( $att->ID );
                     $full     = wp_get_attachment_image_src( $att->ID, 'large' );
                     $src      = $full ? esc_url( $full[0] ) : esc_url( $img_url );
-                    $caption  = wp_kses_post( $att->post_excerpt );
+                    // Prefer the attachment description (may contain HTML), fall back to the caption.
+                    $description = trim( $att->post_content ) !== ''
+                        ? wp_kses_post( wpautop( $att->post_content ) )
+                        : wp_kses_post( $att->post_excerpt );
                     $alt      = esc_attr( get_post_meta( $att->ID, '_wp_attachment_image_alt', true ) ?: $att->post_title );
                     $active   = ( 0 === $index ) ? ' wp-mc-slide--active' : '';
                     $tags     = wp_get_post_tags( $att->ID, [ 'fields' => 'slugs' ] );
@@ -226,9 +229,9 @@ class Shortcode {
                             <div class="wp-mc-info">
                                 <h2 class="wp-mc-title"><?php echo esc_html( $att->post_title ); ?></h2>
 
-                                <?php if ( $caption ) : ?>
+                                <?php if ( $description ) : ?>
                                 <div class="wp-mc-description">
-                                    <?php echo $caption; ?>
+                                    <?php echo $description; ?>
                                 </div>
                                 <?php endif; ?>
 
@@ -321,10 +324,30 @@ class Shortcode {
                                 // Comment form.
                                 $require_login = (bool) get_option( 'wp_mc_require_login_comment', false );
                                 if ( ! $require_login || is_user_logged_in() ) {
+                                    // Custom logged-in notice: no profile-edit link, logout link on its own,
+                                    // required-fields note on a separate line.
+                                    $current_user  = wp_get_current_user();
+                                    $logged_in_as  = sprintf(
+                                        '<p class="logged-in-as wp-mc-logged-in-as">%s <a class="wp-mc-logout-link" href="%s">%s</a><br>%s</p>',
+                                        sprintf(
+                                            /* translators: %s: user display name */
+                                            esc_html__( 'Connecté en tant que %s.', 'wp-media-carousel' ),
+                                            esc_html( $current_user->display_name )
+                                        ),
+                                        esc_url( wp_logout_url( get_permalink( $att->ID ) ) ),
+                                        esc_html__( 'Se déconnecter', 'wp-media-carousel' ),
+                                        sprintf(
+                                            /* translators: %s: asterisk symbol */
+                                            esc_html__( 'Les champs obligatoires sont indiqués avec %s', 'wp-media-carousel' ),
+                                            '<span class="required">*</span>'
+                                        )
+                                    );
+
                                     comment_form( [
                                         'id_form'       => 'wp-mc-comment-form-' . esc_attr( $att->ID ),
                                         'title_reply'   => esc_html__( 'Laisser un commentaire', 'wp-media-carousel' ),
                                         'label_submit'  => esc_html__( 'Publier', 'wp-media-carousel' ),
+                                        'logged_in_as'  => $logged_in_as,
                                     ], $att->ID );
                                 } elseif ( $require_login && ! is_user_logged_in() ) {
                                     echo '<p class="wp-mc-login-notice">';
