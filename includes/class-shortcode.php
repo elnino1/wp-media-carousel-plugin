@@ -195,7 +195,10 @@ class Shortcode {
                     $img_url  = wp_get_attachment_url( $att->ID );
                     $full     = wp_get_attachment_image_src( $att->ID, 'large' );
                     $src      = $full ? esc_url( $full[0] ) : esc_url( $img_url );
-                    $caption  = wp_kses_post( $att->post_excerpt );
+                    // Prefer the attachment description (may contain HTML), fall back to the caption.
+                    $description = trim( $att->post_content ) !== ''
+                        ? wp_kses_post( wpautop( $att->post_content ) )
+                        : wp_kses_post( $att->post_excerpt );
                     $alt      = esc_attr( get_post_meta( $att->ID, '_wp_attachment_image_alt', true ) ?: $att->post_title );
                     $active   = ( 0 === $index ) ? ' wp-mc-slide--active' : '';
                     $tags     = wp_get_post_tags( $att->ID, [ 'fields' => 'slugs' ] );
@@ -226,9 +229,9 @@ class Shortcode {
                             <div class="wp-mc-info">
                                 <h2 class="wp-mc-title"><?php echo esc_html( $att->post_title ); ?></h2>
 
-                                <?php if ( $caption ) : ?>
+                                <?php if ( $description ) : ?>
                                 <div class="wp-mc-description">
-                                    <?php echo $caption; ?>
+                                    <?php echo $description; ?>
                                 </div>
                                 <?php endif; ?>
 
