@@ -30,6 +30,7 @@ rsync -a --progress ./ "${OUTPUT_DIR}/${PLUGIN_SLUG}" \
     --exclude '.github' \
     --exclude 'bin' \
     --exclude 'tests' \
+    --exclude 'docs' \
     --exclude 'vendor' \
     --exclude 'composer.json' \
     --exclude 'composer.lock' \
@@ -39,7 +40,9 @@ rsync -a --progress ./ "${OUTPUT_DIR}/${PLUGIN_SLUG}" \
     --exclude '.*' \
     --exclude '*.log' \
     --exclude '*.zip' \
-    --exclude 'AGENTS.md'
+    --exclude 'AGENTS.md' \
+    --exclude 'skills-lock.json' \
+    --exclude 'SPEC.md'
 
 # Zip it up safely
 cd "${OUTPUT_DIR}"
